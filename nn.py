@@ -3,7 +3,7 @@ import math
 import csv
 import sys
 
-def sigmoid(x):
+def sigmoid(x): # Here a logistic function is used as the kernel/trigger.
 	try:
 		return 1/(1+math.exp((-1)*x))
 	except:
@@ -15,15 +15,15 @@ def sigmoid(x):
 def sigmoid_dif(x):
 	return sigmoid(x)*(1-sigmoid(x))
 
-def LMS(x,y):
+def LMS(x,y):  # Mean square error
 	return ((x[0][0]-y[0])*(x[0][0]-y[0])+(x[1][0]-y[1])*(x[1][0]-y[1])+(x[2][0]-y[2])*(x[2][0]-y[2])+(x[3][0]-y[3])*(x[3][0]-y[3]))/2.0
 
 D=48
-H=72
+H=72  # Here H stands for the nodes amount in hidden layer, it is adjustable.
 C=4
 
-threshold=0.005
-lrate=0.005
+threshold=0.005  # The threshold for mean square error, it is adjustable.
+lrate=0.005  # The learning rate for the network, it is adjustable.
 
 imat=np.random.rand(H,D)
 imat=imat/math.sqrt(float(D))

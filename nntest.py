@@ -13,11 +13,11 @@ def sigmoid(x):
 		else:
 			return 1/(1+math.exp(float('inf')))
 
-def Score(x):
+def Score(x):  # Calculating the score based on the formula from the assignment instruction.
 	return x[0][0]-x[1][0]+5.0*x[2][0]-5.0*x[3][0]
 
 D=48
-H=72
+H=72  # Hidden layer dimension, must be the same as the training part.
 C=4
 
 imat=np.loadtxt("imat.txt")
