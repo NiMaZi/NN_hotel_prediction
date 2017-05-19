@@ -17,7 +17,7 @@ def sigmoid_dif(x):
 	return sigmoid(x)*(1-sigmoid(x))
 
 def LMS(x,y):  # Mean square error
-	return ((x[0][0]-y[0])*(x[0][0]-y[0])+(x[1][0]-y[1])*(x[1][0]-y[1])+(x[2][0]-y[2])*(x[2][0]-y[2])+(x[3][0]-y[3])*(x[3][0]-y[3]))/2.0
+	return ((x[0][0]-y[0])*(x[0][0]-y[0])+(x[1][0]-y[1])*(x[1][0]-y[1])+25.0*(x[2][0]-y[2])*(x[2][0]-y[2])+25.0*(x[3][0]-y[3])*(x[3][0]-y[3]))/2.0
 
 D=47
 H=80  # Here H stands for the nodes amount in hidden layer, it is adjustable.
