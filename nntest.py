@@ -4,20 +4,14 @@ import csv
 import sys
 
 def sigmoid(x):
-	x=0.00001*x # ???
-	try:
-		return 1/(1+math.exp((-1)*x))
-	except:
-		if x>=0.0:
-			return 1/(1+math.exp((-1)*float('inf')))
-		else:
-			return 1/(1+math.exp(float('inf')))
+	# x=0.00001*x # ???
+	return 1/(1+math.exp((-1)*x))
 
 def Score(x):  # Calculating the score based on the formula from the assignment instruction.
 	return x[0][0]-x[1][0]+5.0*x[2][0]-5.0*x[3][0]
 
-D=48
-H=72  # Hidden layer dimension, must be the same as the training part.
+D=47
+H=80  # Hidden layer dimension, must be the same as the training part.
 C=4
 
 imat=np.loadtxt("imat.txt")
@@ -34,8 +28,10 @@ with open("test_set_VU_DM_2014.csv",'rb') as f:
 		iarr=[]
 		if r[0]=='srch_id':
 			continue
+		if not len(r)==50:
+			continue
 		for i in range(0,len(r)):
-			if i==0 or i==1:
+			if i==0 or i==1 or i==7:
 				continue
 			if r[i]=="NULL" or r[i]=="":
 				iarr.append(0.0)
@@ -54,8 +50,8 @@ with open("test_set_VU_DM_2014.csv",'rb') as f:
 		score=Score(fovec)
 		res.append((r[0],r[7],score))
 		c=c+1
-		# if c>=5000:
-		# 	break
+		if c>=5000:
+			break
 
 res.sort(key=lambda tup:(tup[0],-tup[2]))
 g=open("result.txt","w+")
