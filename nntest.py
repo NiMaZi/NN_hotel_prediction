@@ -57,5 +57,5 @@ res.sort(key=lambda tup:(tup[0],-tup[2]))
 g=open("result.txt","w+")
 g.write("SearchId,PropertyId\n")
 for r in res:
-	g.write("%s, %s\n"%(r[0],r[1]))
+	g.write("%s,%s\n"%(r[0],r[1]))
 g.close()
