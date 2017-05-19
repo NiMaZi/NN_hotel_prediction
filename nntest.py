@@ -8,7 +8,7 @@ def sigmoid(x):
 	return 1/(1+math.exp((-1)*x))
 
 def Score(x):  # Calculating the score based on the formula from the assignment instruction.
-	return x[0][0]-x[1][0]+5.0*x[2][0]-5.0*x[3][0]
+	return x[0][0]+5.0*x[2][0]
 
 D=47
 H=80  # Hidden layer dimension, must be the same as the training part.
