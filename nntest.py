@@ -49,13 +49,13 @@ with open("test_set_VU_DM_2014.csv",'rb') as f:
 			fovec[i][0]=sigmoid(ovec[i][0])
 		score=Score(fovec)
 		res.append((r[0],r[7],score))
-		c=c+1
-		if c>=5000:
-			break
+		# c=c+1
+		# if c>=5000:
+		# 	break
 
 res.sort(key=lambda tup:(tup[0],-tup[2]))
 g=open("result.txt","w+")
-g.write("SearchId ,PropertyId\n")
+g.write("SearchId,PropertyId\n")
 for r in res:
 	g.write("%s, %s\n"%(r[0],r[1]))
 g.close()
