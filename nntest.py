@@ -22,7 +22,7 @@ iarr=[]
 res=[]
 c=0
 
-with open("test_set_VU_DM_2014.csv",'rb') as f:
+with open("test_normal.csv",'rb') as f:
 	reader=csv.reader(f)
 	for r in reader:
 		iarr=[]
@@ -49,9 +49,7 @@ with open("test_set_VU_DM_2014.csv",'rb') as f:
 			fovec[i][0]=sigmoid(ovec[i][0])
 		score=Score(fovec)
 		res.append((r[0],r[7],score))
-		# c=c+1
-		# if c>=5000:
-		# 	break
+		
 
 res.sort(key=lambda tup:(tup[0],-tup[2]))
 g=open("result.txt","w+")

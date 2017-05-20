@@ -27,24 +27,18 @@ partition=[0,1,2,3,4,5,6,7,8,9]
 vpartition=[0,1,2,3,4,5,6,7,8,9]
 
 
-threshold=0.001  # The threshold for mean square error, it is adjustable.
+threshold=0.05  # The threshold for mean square error, it is adjustable.
 lrate=0.1  # The learning rate for the network, it is adjustable.
 
-# imat=np.random.rand(H,D)
-# imat=imat/math.sqrt(float(D))
-
-# omat=np.random.rand(C,H)
-# omat=omat/math.sqrt(float(H))
-
-# # imat=np.loadtxt("imat.txt")
-# # omat=np.loadtxt("omat.txt")
-
-# bpimat=imat
-# bpomat=omat
-
 while vpartition:
-	imat=np.loadtxt("imat.txt")
-	omat=np.loadtxt("omat.txt")
+	if len(vpartition)==10:
+		imat=np.random.rand(H,D)
+		imat=imat/math.sqrt(float(D))
+		omat=np.random.rand(C,H)
+		omat=omat/math.sqrt(float(H))
+	else:
+		imat=np.loadtxt("imat.txt")
+		omat=np.loadtxt("omat.txt")
 	bpimat=imat
 	bpomat=omat
 	random.shuffle(vpartition)
@@ -96,11 +90,6 @@ while vpartition:
 				for i in range(0,len(ovec)):
 					fovec[i][0]=sigmoid(ovec[i][0])
 				err=LMS(fovec,lab)
-				# print "current error:"
-				# print err
-				# if err<threshold:
-				# 	print "accepted, epoch:%d"%(c)
-				# 	break
 				cverr=0.0
 				v_count=0
 				with open("%d.csv"%(vpoint),'rb') as g:
@@ -137,17 +126,20 @@ while vpartition:
 						v_count=v_count+1
 						if cverr>verr:
 							break
-						# print "validated %d items, error sum is %f."%(v_count,cverr)
-				print "training set error:"
-				print err
-				print "validating set error:"
-				print cverr/v_count
+				print "training set error is %f, while validating set error is %f."%(err,cverr/v_count)
+				# if (cverr/v_count)<threshold:
+				# 	print "accepted on training set %d, epoch:%d"%(point,c)
+				# 	verr=cverr
+				# 	gc=gc+c
+				# 	gerr=gerr+(verr/v_count)
+				# 	conv_flag=1
+				# 	break
 				if cverr>verr:
 					print "accepted on training set %d, epoch:%d"%(point,c)
-					imat=bpimat
-					omat=bpomat
 					gc=gc+c
 					gerr=gerr+(verr/v_count)
+					imat=bpimat
+					omat=bpomat
 					break
 				else:
 					verr=cverr
