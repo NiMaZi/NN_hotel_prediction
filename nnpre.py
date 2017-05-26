@@ -1,5 +1,5 @@
 # artificial neural network
-# cross validating
+# parameter initializing
 
 import numpy as np
 import math
@@ -19,8 +19,8 @@ def sigmoid(x): # Here a logistic function is used as the kernel/trigger.
 def sigmoid_dif(x):
 	return sigmoid(x)*(1-sigmoid(x))
 
-def LMS(x,y):  # Least mean square error
-	return ((x[0][0]-y[0])*(x[0][0]-y[0])+(x[1][0]-y[1])*(x[1][0]-y[1])+25.0*(x[2][0]-y[2])*(x[2][0]-y[2])+25.0*(x[3][0]-y[3])*(x[3][0]-y[3]))/2.0
+def LMS(x,y):  # least mean square error
+	return ((x[0][0]-y[0])*(x[0][0]-y[0])+(x[1][0]-y[1])*(x[1][0]-y[1])+(x[2][0]-y[2])*(x[2][0]-y[2]))/2.0
 
 D=47
 H=64  # Here H stands for the nodes amount in hidden layer, it is adjustable.
@@ -28,21 +28,19 @@ C=3
 
 partition=[0,1,2,3,4,5,6,7,8,9]
 vpartition=[0,1,2,3,4,5,6,7,8,9]
-nega_count=0
-vnega_count=0
 
-# threshold=1.00005  # The threshold for mean square error, it is adjustable.
+
+threshold=0.001  # The threshold for least mean square error, it is adjustable.
 lrate=0.1  # The learning rate for the network, it is adjustable.
+nega_count=0
 
 final_epoch=0
 while vpartition:
 	if len(vpartition)==10:
-		imat=np.loadtxt("imat.txt")
-		omat=np.loadtxt("omat.txt")
-		# imat=np.random.rand(H,D)
-		# imat=imat/math.sqrt(float(D))
-		# omat=np.random.rand(C,H)
-		# omat=omat/math.sqrt(float(H))
+		imat=np.random.rand(H,D)
+		imat=imat/math.sqrt(float(D))
+		omat=np.random.rand(C,H)
+		omat=omat/math.sqrt(float(H))
 	else:
 		imat=np.loadtxt("imat.txt")
 		omat=np.loadtxt("omat.txt")
@@ -50,7 +48,6 @@ while vpartition:
 	bpomat=omat
 	random.shuffle(vpartition)
 	vpoint=vpartition[0]
-	print "now validating the training process with subset %d."%(vpoint)
 	vpartition.remove(vpoint)
 	verr=float('inf')
 	h_verr=verr
@@ -106,82 +103,15 @@ while vpartition:
 				for i in range(0,len(ovec)):
 					fovec[i][0]=sigmoid(ovec[i][0])
 				err=LMS(fovec,lab)
-				cverr=0.0
-				v_count=0
-				with open("%d.csv"%(vpoint),'rb') as g:
-					vreader=csv.reader(g)
-					for vr in vreader:
-						viarr=[]
-						vlab=[0,0,0]
-						if vr[0]=='srch_id':
-							continue
-						if not len(vr)==54:
-							continue
-						for vi in range(0,len(vr)):
-							if vi==0 or vi==1 or vi==7 or vi==14 or vi==51 or vi==52 or vi==53:
-								continue
-							if vr[vi]=="NULL" or vr[vi]=="":
-								viarr.append(0.0)
-							else:
-								viarr.append(float(vr[vi]))
-						if vr[51]=='0.0' and vr[53]=='0.0':
-							if vnega_count>=33:
-								vnega_count=0
-								vlab=[1.0,0.0,0.0]
-							else:
-								vnega_count=vnega_count+1
-								continue
-						elif vr[51]=='1.0' and vr[53]=='1.0':
-							vlab=[0.0,0.0,1.0]
-						else:
-							vlab=[0.0,1.0,0.0]
-						vivec=np.array(viarr)
-						vivec.shape=(D,1)
-						vhvec=imat.dot(vivec)
-						vfhvec=vhvec
-						for vi in range(0,len(vhvec)):
-							vfhvec[vi][0]=sigmoid(vhvec[vi][0])
-						vovec=omat.dot(vfhvec)
-						vfovec=vovec
-						for vi in range(0,len(vovec)):
-							vfovec[vi][0]=sigmoid(vovec[vi][0])
-						cverr=cverr+LMS(vfovec,vlab)
-						v_count=v_count+1
-						if cverr>verr:
-							break
-				h_cverr=cverr/v_count
-				if p_count==0:
-					h_verr=1
-				else:
-					h_verr=verr/p_count
-				th_verr=h_verr*threshold
-				print "training set error is %f, while validating set error is %f."%(err,h_cverr)
-				# if (cverr/v_count)<threshold:
-				# 	print "accepted on training set %d, epoch:%d"%(point,c)
-				# 	verr=cverr
-				# 	gc=gc+c
-				# 	gerr=gerr+(verr/v_count)
-				# 	conv_flag=1
-				# 	break
-				if h_cverr>th_verr:
-					print "accepted on training set %d, epoch:%d"%(point,c)
+				if err<threshold:
+					np.savetxt("imat.txt",imat)
+					np.savetxt("omat.txt",omat)
 					gc=gc+c
-					gerr=gerr+h_verr
-					imat=bpimat
-					omat=bpomat
 					break
-				elif h_cverr>h_verr and h_cverr<=th_verr:
-					pass
-				else:
-					verr=cverr
-					p_count=v_count
 				c=c+1
 				delta_K=[]
 				for k in range(0,C):
-					if k<2:
-						tmp_delta=(lab[k]-fovec[k][0])*sigmoid_dif(ovec[k][0])
-					else:
-						tmp_delta=25.0*(lab[k]-fovec[k][0])*sigmoid_dif(ovec[k][0])
+					tmp_delta=(lab[k]-fovec[k][0])*sigmoid_dif(ovec[k][0])
 					delta_K.append(tmp_delta)
 				delta_J=[]
 				for j in range(0,H):
@@ -198,12 +128,13 @@ while vpartition:
 				for k in range(0,C):
 					for j in range(0,H):
 						omat[k][j]=omat[k][j]+lrate*delta_K[k]*hvec[j][0]
+	gc=gc+c
 	gerr=float(gerr/len(partition))
-	print "finish validating on subset %d, with totally %d epoches and error sum is %f"%(vpoint,gc,gerr)
+	print "finish initializing on subset %d, with totally %d epoches."%(vpoint,gc)
 	final_epoch=final_epoch+gc
 	np.savetxt("imat.txt",imat)
 	np.savetxt("omat.txt",omat)
 
-print "finish training with %d epoches, result saved."%(final_epoch)
+print "finish initializing with %d epoches, result saved."%(final_epoch)
 np.savetxt("imat.txt",imat)
 np.savetxt("omat.txt",omat)
